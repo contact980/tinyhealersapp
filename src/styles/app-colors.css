@@ -1,0 +1,45 @@
+.App {
+  /* fall-back App styles; variables will override where used */
+  min-height: 100vh;
+}
+
+:root {
+  /* Color tokens converted from provided palette */
+  --background-color: #f3f5f7;
+  --primary-color: #1c404a;
+  --border-color: #CCCCCC;
+  --text-color-1: #000000;
+  --text-color-2: #6B7280;
+  --button-color: #1c404a;
+  --accent-color: #2AA6B4;
+  --card-shadow: rgba(0, 0, 0, 0.1);
+  --success-color: #16A34A;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color-1);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+.HomePage {
+  padding: 2rem;
+  color: var(--text-color-2);
+}
+
+.HomePage h1 {
+  color: var(--primary-color);
+  margin: 0 0 1rem 0;
+}
+
+.btn-primary {
+  background-color: var(--button-color);
+  color: white;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+

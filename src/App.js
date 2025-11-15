@@ -1,23 +1,22 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import './styles/colors.css';
+import HomePage2 from './pages/HomePage2';
+import AuthPage from './pages/AuthPage';
 
 function App() {
+  const [view, setView] = useState(() => {
+    try {
+      const stored = localStorage.getItem('auth');
+      return stored ? 'home' : 'auth';
+    } catch (e) {
+      return 'auth';
+    }
+  }); // 'home' | 'auth'
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {view === 'auth' ? <AuthPage onLogin={() => setView('home')} /> : <HomePage2 onShowAuth={() => setView('auth')} />}
     </div>
   );
 }
