@@ -232,7 +232,7 @@ const HomePage2 = ({ onShowAuth }) => {
         </React.Suspense>
       ) : null}
 
-      {active === 'home' && !(openDoctor || creating) && (
+      {active === 'home' && !(openDoctor || creating) && !(authUser && authUser.role === 3) && (
         <button
           className="fab"
           aria-label="add"
