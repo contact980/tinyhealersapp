@@ -1,7 +1,9 @@
 const API_BASE = process.env.REACT_APP_API_BASE_URL || '';
 
-async function fetchUsers(page = 1, limit = 10) {
-  const res = await fetch(`${API_BASE}/api/users?page=${page}&limit=${limit}`);
+async function fetchUsers(page = 1, limit = 10, search = '') {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+  if (search && String(search).trim()) params.append('search', String(search).trim());
+  const res = await fetch(`${API_BASE}/api/users?${params.toString()}`);
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     const message = err.message || `Request failed: ${res.status}`;

@@ -138,6 +138,9 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
 }
+.stats-grid .stat.full {
+  grid-column: 1 / -1;
+}
 .stat {
   background: #fff;
   border-radius: 10px;
@@ -252,6 +255,15 @@
   width: 92%;
   max-width: 520px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+/* modal close X button */
+.modal .close-x {
+  color: #ef4444;
+  font-size: 22px;
+}
+.modal .close-x:hover {
+  opacity: 0.9;
 }
 
 .modal-row {
@@ -369,6 +381,21 @@
   gap:8px;
   justify-content:flex-end;
   align-items:center;
+}
+.modal-actions .logout-btn {
+  border-radius: 12px;
+  border: 1px solid #ef4444;
+  background: #fff0f0;
+  color: #ef4444;
+  padding: 0.9rem 1rem;
+}
+.modal-actions .update-btn {
+  /* Make modal action primary buttons (Delete/Save) look identical */
+  border-radius: 12px;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 0.9rem 1rem;
 }
 .modal-actions .save-btn {
   flex: 0 0 70%;

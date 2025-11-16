@@ -77,6 +77,11 @@ async function createOrUpdateDoctorStat(payload, token) {
     // new fields: sum existing + payload where provided
     merged.numberofdayconsultation = (existing.numberofdayconsultation || 0) + (payload.numberofdayconsultation || 0);
     merged.noofnightconsultation = (existing.noofnightconsultation || 0) + (payload.noofnightconsultation || 0);
+    // audio/video counters
+    merged.totaldayaudio = (existing.totaldayaudio || 0) + (payload.totaldayaudio || 0);
+    merged.totaldayvideo = (existing.totaldayvideo || 0) + (payload.totaldayvideo || 0);
+    merged.totalnightaudio = (existing.totalnightaudio || 0) + (payload.totalnightaudio || 0);
+    merged.totalnightvideo = (existing.totalnightvideo || 0) + (payload.totalnightvideo || 0);
     if (Array.isArray(existing.toggles) || Array.isArray(payload.toggles)) {
       merged.toggles = (existing.toggles || []).concat(payload.toggles || []);
     }
@@ -105,5 +110,28 @@ async function appendToggleForDate(doctorId, dateISO, toggleObj, token) {
 }
 
 export { appendToggleForDate };
+
+async function deleteDoctorStat(id, token) {
+  const headers = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(`${API_BASE}/api/doctor-stats/${id}`, {
+    method: 'DELETE',
+    headers,
+  });
+  if (!res.ok && res.status !== 204) {
+    const err = await res.json().catch(() => ({}));
+    const message = err.message || `Request failed: ${res.status}`;
+    const error = new Error(message);
+    error.status = res.status;
+    throw error;
+  }
+  try {
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+export { deleteDoctorStat };
 
 

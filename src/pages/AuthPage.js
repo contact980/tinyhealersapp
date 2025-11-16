@@ -21,6 +21,7 @@ const AuthPage = ({ onLogin }) => {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [secondsLeft, setSecondsLeft] = useState(300);
+  const [toast, setToast] = useState(null);
   const timerRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   const otpInputRef = useRef(null);
@@ -90,13 +91,30 @@ const AuthPage = ({ onLogin }) => {
       // call backend to request OTP
       (async () => {
         try {
-          await requestOtp(phone);
+          const numericRole = role === 'admin' ? 1 : 3;
+          await requestOtp(phone, numericRole);
           setView('otp');
           setOtp('');
           startOtpTimer();
+          setToast({ type: 'success', message: 'OTP sent' });
         } catch (err) {
           console.error('requestOtp error', err);
-          alert(err.message || 'Failed to request OTP');
+          let message = err.message || 'Failed to request OTP';
+          const isMismatch = err && err.status === 403;
+          if (isMismatch) {
+            const suggestion = role === 'admin' ? 'Please login through Doctor.' : 'Please login through Admin.';
+            message = `Role mismatch. ${suggestion}`;
+          }
+          setToast({ type: 'error', message });
+          if (isMismatch) {
+            // Navigate immediately but keep toast visible
+            setView('landing');
+            setPhone('');
+            setOtp('');
+            window.setTimeout(() => {
+              setToast(null);
+            }, 7000);
+          }
         }
       })();
     }
@@ -136,6 +154,28 @@ const AuthPage = ({ onLogin }) => {
   return (
     <div className="AuthPage">
       <div className="auth-card">
+        {toast && (
+          <div
+            className={`toast ${toast.type}`}
+            role="status"
+            aria-live="polite"
+            style={{
+              position: 'fixed',
+              top: 16,
+              right: 16,
+              background: toast.type === 'error' ? '#fef2f2' : '#ecfdf5',
+              color: toast.type === 'error' ? '#991b1b' : '#065f46',
+              border: `1px solid ${toast.type === 'error' ? '#fecaca' : '#a7f3d0'}`,
+              borderRadius: 8,
+              padding: '10px 12px',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+              zIndex: 1000,
+              fontSize: 14,
+            }}
+          >
+            {toast.message}
+          </div>
+        )}
         {!(isMobile && (view === 'phone' || view === 'otp')) && (
           <img
             className="auth-image"

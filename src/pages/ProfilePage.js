@@ -47,7 +47,8 @@ const ProfilePage = ({ onLogout }) => {
         const parsed = JSON.parse(stored);
         token = parsed.token;
       }
-      const updated = await updateUser(user._id, { name, degree, hospital }, token);
+      const payload = user?.role === 1 ? { name } : { name, degree, hospital };
+      const updated = await updateUser(user._id, payload, token);
       // persist updated user in localStorage
       try {
         const stored = localStorage.getItem('auth');
@@ -66,17 +67,19 @@ const ProfilePage = ({ onLogout }) => {
   }
 
   function handleLogout() {
-    if (window.confirm('Are you sure you want to logout?')) {
-      // clear auth and call onLogout
-      try { localStorage.removeItem('auth'); } catch (e) {}
-      if (onLogout) onLogout();
-    }
+    if (!window.confirm('Are you sure you want to logout?')) return;
+    // clear all local storage data (including auth)
+    try {
+      localStorage.clear();
+    } catch (e) {}
+    // navigate via parent
+    if (onLogout) onLogout();
   }
 
   return (
     <div className="ProfilePage">
       <header className="profile-header">
-        <h2>Doctor Profile</h2>
+        <h2>{user?.role === 1 ? 'Admin Profile' : 'Doctor Profile'}</h2>
       </header>
 
       <main className="profile-main">
@@ -86,11 +89,15 @@ const ProfilePage = ({ onLogout }) => {
           <label className="field-label">Name</label>
           <input className="text-input" value={name} onChange={(e) => setName(e.target.value)} />
 
-          <label className="field-label">Degree</label>
-          <input className="text-input" value={degree} onChange={(e) => setDegree(e.target.value)} />
+          {user?.role !== 1 && (
+            <>
+              <label className="field-label">Degree</label>
+              <input className="text-input" value={degree} onChange={(e) => setDegree(e.target.value)} />
 
-          <label className="field-label">Current Hospital Working at (Optional)</label>
-          <input className="text-input" value={hospital} onChange={(e) => setHospital(e.target.value)} />
+              <label className="field-label">Current Hospital Working at (Optional)</label>
+              <input className="text-input" value={hospital} onChange={(e) => setHospital(e.target.value)} />
+            </>
+          )}
 
           <label className="field-label">Phone Number</label>
           <input className="text-input disabled" defaultValue={user?.phoneNumber || user?.phone || ''} disabled />

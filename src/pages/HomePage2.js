@@ -4,6 +4,7 @@ import DoctorDetails from './DoctorDetails';
 import { fetchUsers, fetchUserById } from '../controllers/homeController';
 const ProfilePage = React.lazy(() => import('./ProfilePage'));
 const PaymentsPage = React.lazy(() => import('./PaymentsPage'));
+const SalaryPage = React.lazy(() => import('./SalaryPage'));
 
 const doctors = [
   { name: 'rakshitha di 2', title: 'petful', online: false, phone: '+91 7829999992' },
@@ -156,8 +157,22 @@ const HomePage2 = ({ onShowAuth }) => {
       ) : active === 'home' ? (
         <>
           <header className="home-header">
-            <div className="greeting">Welcome, Admin!</div>
-            <h1 className="manage">Manage your Dashboard</h1>
+            {authUser?.role === 1 ? (
+              <>
+                <div className="greeting">Welcome, Admin!</div>
+                <h1 className="manage">Manage your Dashboard</h1>
+              </>
+            ) : authUser?.role === 3 ? (
+              <>
+                <div className="greeting">Welcome, {capitalizeWords(authUser?.name) || 'Doctor'}!</div>
+                <h1 className="manage">Have a productive day</h1>
+              </>
+            ) : (
+              <>
+                <div className="greeting">Welcome!</div>
+                <h1 className="manage">Manage your Dashboard</h1>
+              </>
+            )}
           </header>
 
           <main className="home-main">
@@ -221,14 +236,17 @@ const HomePage2 = ({ onShowAuth }) => {
       ) : active === 'profile' ? (
         <React.Suspense fallback={<div style={{textAlign:'center'}}>Loading...</div>}>
           <ProfilePage onLogout={() => {
-            if (window.confirm('Logout?')) {
-              onShowAuth && onShowAuth();
-            }
+            // Redirect to auth page without additional confirmation
+            onShowAuth && onShowAuth();
           }} />
         </React.Suspense>
       ) : active === 'payments' ? (
         <React.Suspense fallback={<div style={{textAlign:'center'}}>Loading...</div>}>
           <PaymentsPage />
+        </React.Suspense>
+      ) : active === 'salary' ? (
+        <React.Suspense fallback={<div style={{textAlign:'center'}}>Loading...</div>}>
+          <SalaryPage />
         </React.Suspense>
       ) : null}
 
@@ -280,6 +298,21 @@ const HomePage2 = ({ onShowAuth }) => {
             <span className="nav-label">Payments</span>
           </button>
         )}
+        <button className={`nav-item ${active === 'salary' ? 'active' : ''}`} aria-label="salary" onClick={() => { 
+            // save scroll and open salary at top
+            if (typeof window !== 'undefined') {
+              setSavedScroll(window.scrollY || window.pageYOffset);
+              window.scrollTo({ top: 0 });
+            }
+            setActive('salary'); 
+            setOpenDoctor(null); 
+            setCreating(false); 
+          }}>
+          <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 3c-4.97 0-9 3.134-9 7 0 2.485 1.613 4.68 4.027 5.98C7.5 17 9.5 17.5 12 17.5s4.5-.5 4.973-1.52C19.387 14.68 21 12.485 21 10c0-3.866-4.03-7-9-7zm0 17.5c-2.5 0-4.5-.5-4.973-1.52C5.063 17.211 4 15.68 4 14v2c0 2.761 3.582 5 8 5s8-2.239 8-5v-2c0 1.68-1.063 3.211-3.027 4.98C16.5 20 14.5 20.5 12 20.5z" fill="currentColor"/>
+          </svg>
+          <span className="nav-label">Salary</span>
+        </button>
         <button className={`nav-item ${active === 'profile' ? 'active' : ''}`} aria-label="profile" onClick={() => { 
             // save scroll and open profile at top
             if (typeof window !== 'undefined') {

@@ -1,10 +1,10 @@
 const API_BASE = process.env.REACT_APP_API_BASE_URL || '';
 
-async function requestOtp(phoneNumber) {
+async function requestOtp(phoneNumber, role) {
   const res = await fetch(`${API_BASE}/api/auth/request-otp`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phoneNumber }),
+    body: JSON.stringify({ phoneNumber, role }),
   });
 
   if (!res.ok) {

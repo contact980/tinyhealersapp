@@ -4,8 +4,7 @@ import { createPaymentLink, listPayments } from '../controllers/paymentControlle
 
 const PaymentsPage = () => {
   const [amount, setAmount] = useState('');
-  const [description, setDescription] = useState('');
-  const [doctorPhoneNumber, setDoctorPhoneNumber] = useState('');
+  // description and doctorPhoneNumber removed from create modal per request
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [payments, setPayments] = useState([]);
@@ -60,23 +59,22 @@ const PaymentsPage = () => {
 
   async function handleGenerate() {
     if (!amount || Number(amount) <= 0) {
-      alert('Enter a valid amount (in paise)');
+      alert('Enter a valid amount (in rupees)');
       return;
     }
     try {
+      const rupees = Number(amount);
+      const paise = Math.round(rupees * 100);
       const payload = {
-        amount: Number(amount),
+        amount: paise,
         currency: 'INR',
-        description,
-        doctorPhoneNumber: doctorPhoneNumber ? String(doctorPhoneNumber).replace(/\D/g, '') : undefined,
-        customer: { name: customerName, email: customerEmail, contact: doctorPhoneNumber },
+        customerName: customerName || undefined,
+        customer: { name: customerName || undefined, email: customerEmail || undefined },
       };
       setLoading(true);
       const res = await createPaymentLink(payload);
       await load();
       setAmount('');
-      setDescription('');
-      setDoctorPhoneNumber('');
       setCustomerName('');
       setCustomerEmail('');
       setShowModal(false);
@@ -111,7 +109,7 @@ const PaymentsPage = () => {
   return (
     <div className="PaymentsPage">
       <header className="home-header">
-        <h1 className="manage">Payments</h1>
+        <h1 className="manage">Customer Payments</h1>
       </header>
 
       <main className="payments-section">
@@ -144,7 +142,7 @@ const PaymentsPage = () => {
               return (
                 <div key={p._id || url} className="doc-card payment-card">
                   <div className="payment-left">
-                    <div className="payment-title">{p.description || 'Payment'}</div>
+                    <div className="payment-title">{p.customer?.name || p.record?.customer?.name || p.record?.customerName || p.customerName || 'Payment'}</div>
                     <div className="payment-phone">{p.doctorPhoneNumber || p.doctor?.phoneNumber || ''}</div>
                     <div className="payment-url">{url}</div>
                     <div className="payment-date">{new Date(p.createdAt || p.record?.createdAt || Date.now()).toLocaleString()}</div>
@@ -193,14 +191,6 @@ const PaymentsPage = () => {
                 <h2 style={{ margin: 0 }}>Create Payment Link</h2>
               </div>
               <div style={{ display: 'grid', gap: 12 }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: 6 }}>Amount</label>
-                  <input value={amount} onChange={(e)=>setAmount(e.target.value)} className="text-input" placeholder="10000" />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: 6 }}>Doctor Phone Number</label>
-                  <input value={doctorPhoneNumber} onChange={(e)=>setDoctorPhoneNumber(e.target.value)} className="text-input" placeholder="9812345678" />
-                </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <div>
                     <label style={{ display: 'block', marginBottom: 6 }}>Customer name</label>
@@ -212,8 +202,8 @@ const PaymentsPage = () => {
                   </div> */}
                 </div>
                 <div>
-                  <label style={{ display: 'block', marginBottom: 6 }}>Description</label>
-                  <input value={description} onChange={(e)=>setDescription(e.target.value)} className="text-input" placeholder="For e.g., Consultation fee" />
+                  <label style={{ display: 'block', marginBottom: 6 }}>Amount (₹)</label>
+                  <input value={amount} onChange={(e)=>setAmount(e.target.value)} className="text-input" placeholder="e.g., 100" />
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button className="btn-primary btn-large" style={{ flex: 1 }} onClick={handleGenerate} disabled={loading}>{loading ? 'Creating...' : 'Generate Link'}</button>
