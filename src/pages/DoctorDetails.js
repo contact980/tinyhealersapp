@@ -123,7 +123,7 @@ const DoctorDetails = ({ doctor = null, mode = 'view', onClose = () => {} }) => 
     };
   }, [onClose]);
 
-  // determine if current local user is role 3 (doctor) and should be view-only
+  // determine if current local user is role 3 (doctor) and should be view-onlyyyy
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
