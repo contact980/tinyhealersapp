@@ -179,7 +179,7 @@ const AuthPage = ({ onLogin }) => {
         {!(isMobile && (view === 'phone' || view === 'otp')) && (
           <img
             className="auth-image"
-            src="https://vsgeqrtooljpzibkcfez.supabase.co/storage/v1/object/public/images/Gemini_Generated_Image_8nnjj38nnjj38nnj.png"
+            src="/image.png"
             alt="doctor"
           />
         )}
@@ -321,5 +321,4 @@ const AuthPage = ({ onLogin }) => {
 };
 
 export default AuthPage;
-
 
