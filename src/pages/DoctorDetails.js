@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/doctor-details.css';
 import { updateUser, createUser, deleteUser, fetchUserById } from '../controllers/homeController';
-import { fetchDoctorStatsForDoctor, createDoctorStat, createOrUpdateDoctorStat, fetchDoctorStatByDate, appendToggleForDate, updateDoctorStat, deleteDoctorStat } from '../controllers/doctorStatsController';
+import { fetchDoctorStatsForDoctor, createOrUpdateDoctorStat, appendToggleForDate, updateDoctorStat, deleteDoctorStat } from '../controllers/doctorStatsController';
 
 // Helper: format seconds into human-friendly string
 function formatDuration(totalSeconds) {
@@ -213,7 +213,7 @@ const DoctorDetails = ({ doctor = null, mode = 'view', onClose = () => {} }) => 
           role: 3,
           isOnline: online,
         };
-        const created = await createUser(payload, token);
+        await createUser(payload, token);
         // optionally you could propagate created user to parent
         alert('Doctor created');
         closeWithHistory({ reload: true });
@@ -233,7 +233,7 @@ const DoctorDetails = ({ doctor = null, mode = 'view', onClose = () => {} }) => 
         const parsed = JSON.parse(stored);
         token = parsed.token;
       }
-      const updated = await updateUser(doctor._id || doctor.id, { name, degree, hospital, isOnline: online }, token);
+      await updateUser(doctor._id || doctor.id, { name, degree, hospital, isOnline: online }, token);
       // update local doctor reference (caller holds it)
       alert('Doctor updated');
       closeWithHistory();
@@ -441,9 +441,6 @@ const DoctorDetails = ({ doctor = null, mode = 'view', onClose = () => {} }) => 
                 const totalFollowUps = stats.reduce((s, it) => s + (it.totalFollowUps || 0), 0);
                 const totalOnlineSeconds = stats.reduce((s, it) => s + (it.totalOnlineSeconds || it.onlineSeconds || computeOnlineOfflineFromToggles(it.toggles || [], it.date).online || 0), 0);
                 const totalOfflineSeconds = stats.reduce((s, it) => s + (it.totalOfflineSeconds || computeOnlineOfflineFromToggles(it.toggles || [], it.date).offline || 0), 0);
-                const dayCount = stats.reduce((s, it) => s + (it.isDayShift ? 1 : 0), 0);
-                const nightCount = stats.reduce((s, it) => s + (it.isDayShift ? 0 : 1), 0);
-
                 const totalMade = stats.reduce((s, it) => s + (Number(it.dailySalary) || 0), 0);
                 return [
                   <Stat key="cons" title="Total Consultations" value={totalConsultations} />,
@@ -731,5 +728,3 @@ const DoctorDetails = ({ doctor = null, mode = 'view', onClose = () => {} }) => 
 };
 
 export default DoctorDetails;
-
-

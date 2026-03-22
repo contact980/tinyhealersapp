@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/homepage.css';
 import DoctorDetails from './DoctorDetails';
-import { fetchUsers, fetchUserById } from '../controllers/homeController';
+import { fetchUsers } from '../controllers/homeController';
 const ProfilePage = React.lazy(() => import('./ProfilePage'));
 const PaymentsPage = React.lazy(() => import('./PaymentsPage'));
 const SalaryPage = React.lazy(() => import('./SalaryPage'));
-
-const doctors = [
-  { name: 'rakshitha di 2', title: 'petful', online: false, phone: '+91 7829999992' },
-  { name: 'Dr. Sneha Reddy', title: 'General Physician', online: true, phone: '+91 1098765432' },
-  { name: 'Dr. tirumareddi naresh', title: 'mbbs', online: true, phone: '+91 1234567898' },
-  { name: 'Dr. Rahul Sharma', title: 'Orthopedic', online: true, phone: '+91 8765432109' },
-];
 
 const HomePage2 = ({ onShowAuth }) => {
   const [active, setActive] = useState('home'); // 'home' | 'profile'
@@ -334,5 +327,4 @@ const HomePage2 = ({ onShowAuth }) => {
 };
 
 export default HomePage2;
-
 

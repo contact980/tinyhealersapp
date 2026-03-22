@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import '../styles/payments.css';
 import { createPaymentLink, listPayments } from '../controllers/paymentController';
 
@@ -15,17 +15,13 @@ const PaymentsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
 
-  useEffect(() => {
-    load();
-  }, [statusFilter, debouncedSearch]);
-
   // debounce search text
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
     return () => clearTimeout(t);
   }, [search]);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const list = await listPayments(statusFilter, 1, 50, undefined, debouncedSearch);
@@ -55,7 +51,11 @@ const PaymentsPage = () => {
     } finally {
       setLoading(false);
     }
-  }
+  }, [statusFilter, debouncedSearch]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   async function handleGenerate() {
     if (!amount || Number(amount) <= 0) {
@@ -219,4 +219,3 @@ const PaymentsPage = () => {
 };
 
 export default PaymentsPage;
-
